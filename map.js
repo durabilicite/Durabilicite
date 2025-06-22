@@ -1,29 +1,33 @@
 // Initialize the map
-const map = L.map('map').setView([45.5017, -73.5673], 11); // Centered on Montreal
+const map = L.map('map').setView([45.5017, -73.5673], 11);
 
 // Add a base layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Define color scale function
+// Define min and max values for temperature class
+const minTemp = 0;
+const maxTemp = 5;
+
+// Continuous gradient color using chroma.js
 function getColor(tempClass) {
-  return tempClass >= 5 ? '#800026' :
-         tempClass >= 4 ? '#BD0026' :
-         tempClass >= 3 ? '#E31A1C' :
-         tempClass >= 2 ? '#FC4E2A' :
-         tempClass >= 1 ? '#FD8D3C' :
-                          '#FEB24C'; // default light color
+  return chroma
+    .scale(['#FEB24C', '#800026']) // light orange to dark red
+    .domain([minTemp, maxTemp])
+    .mode('lab')(Number(tempClass))
+    .hex();
 }
 
-// Load and add GeoJSON
+// Load and style the GeoJSON
 fetch('hextemp.geojson')
   .then(response => response.json())
   .then(data => {
     L.geoJSON(data, {
       style: function(feature) {
+        const value = feature.properties.mean_temp_class;
         return {
-          fillColor: getColor(feature.properties.mean_temp_class),
+          fillColor: getColor(value),
           weight: 1,
           opacity: 1,
           color: 'white',
