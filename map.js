@@ -6,29 +6,38 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Define min, mid, max values for mean_temp_class
-const minTemp = 0;
-const maxTemp = 5;
-const midTemp = (minTemp + maxTemp) / 2;
-
-// Diverging color scale: blue → white → red
-function getColor(tempClass) {
-  return chroma
-      .scale(['blue', 'white', 'red'])
-      .domain([minTemp, midTemp, maxTemp])
-      .mode('lab')(Number(tempClass))
-      .hex();
-}
-
 // Load and style the GeoJSON
 fetch('hextemp.geojson')
     .then(response => response.json())
     .then(data => {
+      // Extract and convert all values
+      const values = data.features
+          .map(f => Number(f.properties.mean_temp_class))
+          .filter(v => !isNaN(v));  // remove nulls/undefined
+
+      const minTemp = Math.min(...values);
+      const maxTemp = Math.max(...values);
+      const midTemp = (minTemp + maxTemp) / 2;
+
+      console.log({ minTemp, midTemp, maxTemp }); // Debug
+
+      // Diverging color scale
+      function getColor(tempClass) {
+        const value = Number(tempClass);
+        if (isNaN(value)) return '#ccc'; // fallback color for missing data
+
+        return chroma
+            .scale(['blue', 'white', 'red'])
+            .domain([minTemp, midTemp, maxTemp])
+            .mode('lab')(value)
+            .hex();
+      }
+
       L.geoJSON(data, {
         style: function(feature) {
-          const value = feature.properties.mean_temp_class;
+          const tempVal = feature.properties.mean_temp_class;
           return {
-            fillColor: getColor(value),
+            fillColor: getColor(tempVal),
             weight: 1,
             opacity: 1,
             color: 'white',
