@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+  <meta charset="utf-8" />
   <title>Demo - Durabilicité</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="style.css"> <!-- optional -->
-
-  <script src="https://unpkg.com/chroma-js@2.1.0/chroma.min.js"></script>
+  <link rel="stylesheet" href="style.css"> <!-- Optional -->
 
   <style>
     #map {
@@ -20,18 +18,24 @@
 </head>
 
 <body>
-<a href = "index.html">Home</a>
-<a href = "about.html">About</a>
-<a href = "contact.html">Contact Us</a>
-<a href = "map.html">App</a>
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact Us</a>
+<a href="map.html">App</a>
 <h1>Durabilicité</h1>
 <p>I'm hosted with GitHub Pages.</p>
+
+<label for="dataset-select"><strong>Select dataset:</strong></label>
+<select id="dataset-select">
+  <option value="hextemp.geojson">Surface Temperature</option>
+  <option value="hexpop.geojson">Population</option>
+</select>
+
 <div id="map"></div>
 
-<!-- Leaflet JS -->
+<!-- Load JS libraries in correct order -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<!-- Your custom JS -->
+<script src="https://unpkg.com/chroma-js@2.1.0/chroma.min.js"></script>
 <script src="map.js"></script>
 </body>
 </html>
